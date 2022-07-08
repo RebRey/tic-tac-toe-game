@@ -1,0 +1,187 @@
+/* Set up basic box sizing - use the everything selector and after and before elements*/
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+/* Selects the root element of the document
+:root can be useful for declaring global CSS variables */
+:root {
+  --cell-size: 100px;
+  /* Make the Xs and Os 90% of the cell size */
+  --mark-size: calc(var(--cell-size) * 0.9);
+}
+
+/* Makes making the black background easier */
+body {
+  margin: 0;
+}
+
+/* This will make the board fill the entire screen which will make it easier to center it on the screen */
+.board {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  /* Justify items and align items will center the Xs and Os inside the cells */
+  justify-items: center;
+  align-items: centers;
+  /* Create a 3x3 grid with an auto size */
+  grid-template-columns: repeat(3, auto);
+}
+
+.cell {
+  width: var(--cell-size);
+  height: 100px;
+  border: 1px solid black;
+  /* Helps to display contents inside of the cell */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Helps to properly display the X which gives it the same exact space between all of the cells edges */
+  position: relative;
+  cursor: pointer;
+}
+
+/* Remove the top grid border from the first three elements (child/cells) */
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3) {
+  border-top: none;
+}
+
+/* Remove the bottom grid border from the last three elements (7th, 8th, and 9th child*/
+.cell:nth-child(7),
+.cell:nth-child(8),
+.cell:nth-child(9) {
+  border-bottom: none;
+}
+
+/* Remove the left grid border from the 1st child, 4th child, and 7th child */
+.cell:nth-child(3n + 1) {
+  border-left: none;
+}
+
+/* Remove the right grid border from the 3rd child, 6th child, and 9th child */
+.cell:nth-child(3n + 3) {
+  border-right: none;
+}
+
+/* Add a not allowed cursor when the mouse hovers over a cell that has a marker */
+.cell.x,
+.cell.circle {
+  cursor: not-allowed;
+}
+
+/* make the markers black in color */
+.cell.x::before,
+.cell.x::after,
+.cell.circle::before {
+  background-color: black;
+}
+
+/* add a hover effect for the x and O and change the color to light grey */
+.board.x .cell:not(.x):not(.circle):hover::before,
+.board.x .cell:not(.x):not(.circle):hover::after,
+.board.circle .cell:not(.x):not(.circle):hover::before {
+  background-color: lightgrey;
+}
+
+/* Use plain css to create the X marker by using the before and after pseudo elements*/
+.cell.x::before,
+.cell.x::after,
+/* Only apply the hover effect when it is not over an x or o marker */
+.board.x .cell:not(.x):not(.circle):hover::before,
+.board.x .cell:not(.x):not(.circle):hover::after {
+  /* Add content with an empty string so that the before and after elements can render */
+  content: "";
+  /* Make the X's width 15% of it's height */
+  width: calc(var(--mark-size) * 0.15);
+  height: var(--mark-size);
+  /* x will be off set because both of the elements are displayed next to each other in the document 
+  flow because their position is static. Change their position to absolute so that the elements
+  have the same exact base as their parent so they won't overlap over top of each other */
+  position: absolute;
+}
+
+/* rotate the element by 45deg to form the part of the X */
+.cell.x::before,
+/* Only apply the hover effect when it is not over an x or o marker */
+.board.x .cell:not(.x):not(.circle):hover::before {
+  transform: rotate(45deg);
+}
+
+/* rotate the element by -45deg to form the part of the X */
+.cell.x::after,
+/* Only apply the hover effect when it is not over an x or o marker */
+.board.x .cell:not(.x):not(.circle):hover::after {
+  transform: rotate(-45deg);
+}
+
+/* Use plain css to create the O marker by using the before and after pseudo elements*/
+.cell.circle::before,
+.cell.circle::after,
+/* Only apply the hover effect when it is not over an x or o marker */
+.board.circle .cell:not(.x):not(.circle):hover::before,
+.board.circle .cell:not(.x):not(.circle):hover::after {
+  /* Add content with an empty string so that the before and after elements can render */
+  content: "";
+  width: var(--mark-size);
+  height: var(--mark-size);
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* larger circle that makes the "outside" or outline of the O marker */
+.cell.circle::before,
+/* Only apply the hover effect when it is not over an x or o marker */
+.board.circle .cell:not(.x):not(.circle):hover::before {
+  width: var(--mark-size);
+  height: var(--mark-size);
+}
+
+/* smaller circle that makes the "inside" of the O marker */
+.cell.circle::after,
+/* Only apply the hover effect when it is not over an x or o marker */
+.board.circle .cell:not(.x):not(.circle):hover::after {
+  width: calc(var(--mark-size) * 0.7);
+  height: calc(var(--mark-size) * 0.7);
+  background-color: white;
+}
+
+.winning-message {
+  /* change the display to none because we don't want to show by default */
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 5rem;
+  /* stack the message and the button so that they are ontop of eachother */
+  flex-direction: column;
+}
+
+.winning-message button {
+  font-size: 3rem;
+  background-color: white;
+  border: 1px solid black;
+  padding: 0.25em 0.5em;
+  cursor: pointer;
+}
+
+.winning-message button:hover {
+  background-color: black;
+  color: white;
+  border-color: white;
+}
+
+.winning-message.show {
+  display: flex;
+}
